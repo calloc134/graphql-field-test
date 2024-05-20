@@ -2,11 +2,7 @@ import { getNamedType } from "graphql";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import { createSchema, createYoga } from "graphql-yoga";
 
-// available when handling requests, needs to be provided by the implementor
-// eslint-disable-next-line @typescript-eslint/ban-types
-type ServerContext = {};
-
-export const yoga = createYoga<ServerContext>({
+export const yoga = createYoga({
   schema: createSchema({
     typeDefs: /* GraphQL */ `
       type Query {
