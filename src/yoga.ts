@@ -1,9 +1,5 @@
-import { Kind, getNamedType, parse } from "graphql";
-import {
-  ResolveTree,
-  parseResolveInfo,
-  simplifyParsedResolveInfoFragmentWithType,
-} from "graphql-parse-resolve-info";
+import { getNamedType } from "graphql";
+import { parseResolveInfo } from "graphql-parse-resolve-info";
 import { createSchema, createYoga } from "graphql-yoga";
 
 // available when handling requests, needs to be provided by the implementor
