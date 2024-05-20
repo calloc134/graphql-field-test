@@ -1,4 +1,9 @@
-import { Kind, parse } from "graphql";
+import { Kind, getNamedType, parse } from "graphql";
+import {
+  ResolveTree,
+  parseResolveInfo,
+  simplifyParsedResolveInfoFragmentWithType,
+} from "graphql-parse-resolve-info";
 import { createSchema, createYoga } from "graphql-yoga";
 
 // available when handling requests, needs to be provided by the implementor
@@ -14,35 +19,34 @@ export const yoga = createYoga<ServerContext>({
 
       type Message {
         text: String!
+        text2: String!
+        text3: String!
       }
     `,
     resolvers: {
       Query: {
         greetings: (_parent, _args, _context, _info) => {
-          const parsedQuery = parse(
-            _context.params.query?.replace("\n", "") || "{}"
-          );
+          // クエリ情報を解析
+          const parsed = parseResolveInfo(_info);
+          const field =
+            parsed?.fieldsByTypeName[getNamedType(_info.returnType).name];
 
-          // console.dir(parsedQuery, { depth: null });
+          // フィールドが存在しない場合
+          if (!field) {
+            throw new Error("No fields found");
+          }
 
-          const thisQueryDefinition = parsedQuery.definitions.find(
-            (definition) => {
-              if (definition.kind === Kind.OPERATION_DEFINITION) {
-                return definition;
-              }
-            }
-          );
+          // 含まれるフィールドのキー名を取得
+          const keys = Object.keys(field);
 
-          console.dir(thisQueryDefinition, { depth: null });
+          // 表示
+          console.log(keys);
 
-          // const queryAST = getOperationAST(parsedQuery.definitions, "query");
-
-          // console.dir(document, { depth: null });
-
-          // console.log(`_info: ${JSON.stringify(_info)}`);
-          // console.log(`_parent: ${JSON.stringify(_parent)}`);
-          // console.log(`_args: ${JSON.stringify(_args)}`);
-          return { text: "Hello, World!" };
+          return {
+            text: "Hello, World!",
+            text2: "Hello, World!",
+            text3: "Hello, World!",
+          };
         },
       },
     },
